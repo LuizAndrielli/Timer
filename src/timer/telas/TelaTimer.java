@@ -5,6 +5,10 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,6 +29,22 @@ public class TelaTimer extends JDialog{
 	private JButton botaoStart = new JButton("Start");
 	private JButton botaoStop = new JButton("Stop");
 	
+	private Runnable thread1 = new Runnable() {
+		
+		@Override
+		public void run() {
+			while(true) {
+				mostraTempo.setText(new SimpleDateFormat("dd/MM/yyyy hh:mm.ss").format(Calendar.getInstance().getTime()));
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
+	
+	private Thread threadTimer1;
 	
 	public TelaTimer() {
 		
@@ -71,7 +91,22 @@ public class TelaTimer extends JDialog{
 		jPanel.add(botaoStop,bagConstraints);
 		
 		
+		botaoStart.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) { /*Executa o clique no botao start*/
+				threadTimer1 = new Thread(thread1);
+				threadTimer1.start();
+			}
+		});
 		
+		botaoStop.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				threadTimer1.stop();
+			}
+		});
 		
 		
 		/*Sempre será a útima linha*/
