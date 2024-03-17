@@ -31,6 +31,8 @@ public class TelaTimer extends JDialog{
 	
 	private Runnable thread1 = new Runnable() {
 		
+		/*Nesse método, enquanto for true ele vai atualizar o texto do campo mostraTempo a cada 1s, esse metodo 
+		 * é chamado pela thread acionada pelo botão*/
 		@Override
 		public void run() {
 			while(true) {
@@ -44,7 +46,24 @@ public class TelaTimer extends JDialog{
 		}
 	};
 	
+	private Runnable thread2 = new Runnable() {
+		
+		@Override
+		public void run() {
+			while(true) {
+				mostraTempo2.setText(new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(Calendar.getInstance().getTime()));
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
+	
 	private Thread threadTimer1;
+	private Thread threadTimer2;
+	
 	
 	public TelaTimer() {
 		
@@ -97,6 +116,11 @@ public class TelaTimer extends JDialog{
 			public void actionPerformed(ActionEvent e) { /*Executa o clique no botao start*/
 				threadTimer1 = new Thread(thread1);
 				threadTimer1.start();
+				threadTimer2 = new Thread(thread2);
+				threadTimer2.start();
+				botaoStop.setEnabled(true);
+				botaoStart.setEnabled(false);
+				
 			}
 		});
 		
@@ -105,8 +129,13 @@ public class TelaTimer extends JDialog{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				threadTimer1.stop();
+				threadTimer2.stop();
+				botaoStop.setEnabled(false);
+				botaoStart.setEnabled(true);
 			}
 		});
+		
+		botaoStop.setEnabled(false);
 		
 		
 		/*Sempre será a útima linha*/
